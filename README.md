@@ -105,7 +105,7 @@ Section 4: FIXING THE PROBLEMS BY CODE REFACTORING
 We will now refactor the code to make it dynamic. To do this we will introduce variables.
 
 1. Starting with the provider block, declare a variable named region, give it a default value, and update the provider section by referring to the declared variable.
-2. 
+
 ```
 variable "region" {
         default = "us-east-1"
@@ -117,6 +117,7 @@ provider "aws" {
 ````
 
 2. Do the same to cidr value in the vpc block, and all the other arguments.
+
 ```
 variable "region" {
         default = "us-east-1"
@@ -161,7 +162,7 @@ enable_classiclink_dns_support = var.enable_classiclink
 
 Terraform has a functionality that allows us to pull data which exposes information to us. Let us fetch Availability zones from AWS, and replace the hard coded value in the subnet’s availability_zone section.
 
-````
+```
 # Get list of availability zones
 data "aws_availability_zones" "available" {
   state = "available"
@@ -231,7 +232,9 @@ variable "preferred_number_of_public_subnets" {
 The first part var.preferred_number_of_public_subnets == null checks if the value of the variable is set to null or has some value defined.
 The second part ? and length(data.aws_availability_zones.available.names) means, if the first part is true, then use this. In other words, if preferred number of public subnets is null (Or not known) then set the value to the data returned by lenght function.
 The third part : and var.preferred_number_of_public_subnets means, if the first condition is false, i.e preferred number of public subnets is not null then set the value to whatever is definied in var.preferred_number_of_public_subnets
+
 Now our main.tf looks this:
+
 
 ```
 # Get list of availability zones
@@ -294,12 +297,14 @@ resource "aws_subnet" "public" {
 
 <img width="647" alt="Screenshot 2022-12-17 at 00 49 47" src="https://user-images.githubusercontent.com/61475969/208214325-b4ded800-b084-411d-9699-2dd9b7d3e5e0.png">
 
+
 Section 5. Introducing variables.tf & terraform.tfvars
 
 1. Instead of havng a long lisf of variables in main.tf file, we can actually make our code a lot more readable and better structured by moving out some parts of the configuration content to other files.
 
-We can create a file called variables.tf and put all the variables declaration we need in it. Also we will create a terraform.tfvars file and put all the values of the variables values in it.
+We can create a file called ```variables.tf``` and put all the variables declaration we need in it. Also we will create a ```terraform.tfvars``` file and put all the values of the variables values in it.
 Variables.tf file:
+
 
 ```
 variable "region" {
@@ -330,10 +335,12 @@ variable "enable_classiclink_dns_support" {
       default = null
 }
 ```
+
 <img width="647" alt="Screenshot 2022-12-17 at 01 00 27" src="https://user-images.githubusercontent.com/61475969/208214838-a93c3054-37fe-4f5e-b415-1c6f2d98f594.png">
 
 
 terraform.tfvars file:
+
 ```
 region = "eu-central-1"
 
@@ -354,6 +361,7 @@ preferred_number_of_public_subnets = 2
 
 Main.tf file:
 
+```
 # Get list of availability zones
 data "aws_availability_zones" "available" {
 state = "available"
@@ -381,8 +389,9 @@ resource "aws_subnet" "public" {
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 }
+```
 
 <img width="809" alt="Screenshot 2022-12-17 at 01 04 29" src="https://user-images.githubusercontent.com/61475969/208215077-9e9d6b3a-b259-45a3-8d5e-15272a3bcc9e.png">
 
-2. You can run terraform plan now to see the configuration of the infrastructure.
+2. You can run ```terraform plan``` now to see the configuration of the infrastructure.
 
