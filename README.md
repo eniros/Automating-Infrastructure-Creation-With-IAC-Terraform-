@@ -395,3 +395,6 @@ resource "aws_subnet" "public" {
 
 2. You can run ```terraform plan``` now to see the configuration of the infrastructure.
 
+<img width="658" alt="Screenshot 2022-12-17 at 01 18 56" src="https://user-images.githubusercontent.com/61475969/208216028-f8a7aa99-ee1f-46a7-9327-819ff0c80ae6.png">
+
+
